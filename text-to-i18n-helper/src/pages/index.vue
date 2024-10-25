@@ -30,6 +30,8 @@ import {computed, ref} from 'vue'
 
   function toCamelCase(originalText) {
     return originalText
+      .replace(/"/g, "'") // Reemplaza comillas dobles por comillas simples
+      .replace(/\./g, '') // Elimina los puntos
       .toLowerCase()
       .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
         index === 0 ? word.toLowerCase() : word.toUpperCase()
@@ -42,21 +44,21 @@ import {computed, ref} from 'vue'
   function toVueTranslation(originalText) {
     if(!originalText) return
     const lines = originalText.split("\n").map((line, i) => {
-      return `$q{{${toCamelCase(line)}}}`
+      return `{{$q("${toCamelCase(line)}")}}`
     });
     return lines.join('\n')
   }
 
   function toI18n(originalText) {
     if(!originalText) return
-    const lines = originalText.split("\n").map((line, i) => {
+    const lines = originalText.replace(/"/g, "'").split("\n").map((line, i) => {
       const camelCaseKey = toCamelCase(line);
-      if(i === 0) return `  ${camelCaseKey}: "${line}" `;
+      if(i === 0) return `  "${camelCaseKey}": "${line}"`;
       return `
-        ${camelCaseKey}: "${line}"`;
+        "${camelCaseKey}": "${line}"`;
     });
-    let i18nTranslation = `${componentNameInput.value}: {
-      ${lines}"
+    let i18nTranslation = `"${componentNameInput.value}": {
+      ${lines}
     }`
     return i18nTranslation
   }
