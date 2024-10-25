@@ -3,7 +3,7 @@
     <v-card class="column d-flex flex-column">
       <v-card-title  class="ma-2">Settings</v-card-title>
       <v-text-field v-model="componentNameInput" label="Component name" class="pa-4 pt-2"></v-text-field>
-      <v-textarea v-model="translationsInput" rows="24" label="Translations" class="pa-4 pt-0"></v-textarea>
+      <v-textarea @paste="handlePaste" v-model="translationsInput" rows="24" label="Translations" class="pa-4 pt-0"></v-textarea>
     </v-card>
 
     <v-card class="column">
@@ -28,6 +28,15 @@ import {computed, ref} from 'vue'
   const componentNameInput = ref('')
   const translationsInput = ref('')
 
+  const handlePaste = (event) => {
+    // Obtener el texto pegado
+    const pastedData = event.clipboardData.getData('text');
+
+    // Aquí puedes ejecutar cualquier lógica que necesites con el texto pegado
+    console.log('Texto pegado:', getVueTranslation(pastedData))
+
+  }
+
   function toCamelCase(originalText) {
     return originalText
       .replace(/"/g, "'") // Reemplaza comillas dobles por comillas simples
@@ -39,13 +48,14 @@ import {computed, ref} from 'vue'
       .replace(/\s+/g, '');
   }
 
+  const getVueTranslation = (line) => {
+  return `{{$q("${toCamelCase(line)}")}}`
+}
 
 
   function toVueTranslation(originalText) {
     if(!originalText) return
-    const lines = originalText.split("\n").map((line, i) => {
-      return `{{$q("${toCamelCase(line)}")}}`
-    });
+    const lines = originalText.split("\n").map(getVueTranslation);
     return lines.join('\n')
   }
 
