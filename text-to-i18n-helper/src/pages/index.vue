@@ -28,13 +28,14 @@ import {computed, ref} from 'vue'
   const componentNameInput = ref('')
   const translationsInput = ref('')
 
-  const handlePaste = (event) => {
+  const handlePaste = async (event) => {
     // Obtener el texto pegado
     const pastedData = event.clipboardData.getData('text');
 
     // Aquí puedes ejecutar cualquier lógica que necesites con el texto pegado
     console.log('Texto pegado:', getVueTranslation(pastedData))
-
+    await navigator.clipboard.writeText(getVueTranslation(pastedData));
+    translationsInput.value += '\n'
   }
 
   function toCamelCase(originalText) {
