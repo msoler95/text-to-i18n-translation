@@ -41,8 +41,10 @@ import {computed, ref} from 'vue'
 
   function toVueTranslation(originalText) {
     if(!originalText) return
-    let i18nTranslation = `$q{{${toCamelCase(originalText)}}}`
-    return i18nTranslation
+    const lines = originalText.split("\n").map((line, i) => {
+      return `$q{{${toCamelCase(line)}}}`
+    });
+    return lines.join('\n')
   }
 
   function toI18n(originalText) {
