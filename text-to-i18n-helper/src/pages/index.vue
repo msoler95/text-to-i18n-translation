@@ -8,12 +8,16 @@
 
     <v-card class="column">
       <v-card-title class="ma-2">Vue translation</v-card-title>
-      <v-card-text>{{vueTranslationColumnText}}</v-card-text>
+      <v-card-text>
+        <v-textarea v-model="vueTranslationColumnText"></v-textarea>
+      </v-card-text>
     </v-card>
 
     <v-card class="column">
       <v-card-title class="ma-2">i18n translation</v-card-title>
-      <v-card-text>{{i18nTranslationColumnText}}</v-card-text>
+      <v-card-text>
+        <v-textarea v-model="i18nTranslationColumnText"></v-textarea>
+      </v-card-text>
     </v-card>
 
   </div>
@@ -23,6 +27,7 @@
 import {computed, ref} from 'vue'
   const componentNameInput = ref('')
   const translationsInput = ref('')
+
   function toCamelCase(originalText) {
     return originalText
       .toLowerCase()
@@ -31,16 +36,24 @@ import {computed, ref} from 'vue'
       )
       .replace(/\s+/g, '');
   }
-  function toI18n(originalText) {
-    if(!originalText) return
-    const i18nTranslation = `${toCamelCase(originalText)}: "${originalText}"`
-    return i18nTranslation
-  }
+
+
+
   function toVueTranslation(originalText) {
     if(!originalText) return
-    const i18nTranslation = "$q{{"+toCamelCase(originalText)+"}}"
+    let i18nTranslation = `$q{{${toCamelCase(originalText)}}}`
     return i18nTranslation
   }
+
+  function toI18n(originalText) {
+    if(!originalText) return
+    let i18nTranslation = `
+    ${componentNameInput.value}: {
+      ${toCamelCase(originalText)}: "${originalText}"
+    }`
+    return i18nTranslation
+  }
+
   const vueTranslationColumnText = computed(() => {
     return toVueTranslation(translationsInput.value)
   })
