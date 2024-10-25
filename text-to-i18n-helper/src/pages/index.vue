@@ -1,22 +1,22 @@
 <template>
   <div class="d-flex "  style="width: 100%; height: 100%;">
-    <v-card class="column">
+    <v-card class="column d-flex flex-column">
       <v-card-title  class="ma-2">Settings</v-card-title>
       <v-text-field v-model="componentNameInput" label="Component name" class="pa-4 pt-2"></v-text-field>
-      <v-textarea v-model="translationsInput" rows="20" label="Translations" class="pa-4 pt-0"></v-textarea>
+      <v-textarea v-model="translationsInput" rows="24" label="Translations" class="pa-4 pt-0"></v-textarea>
     </v-card>
 
     <v-card class="column">
       <v-card-title class="ma-2">Vue translation</v-card-title>
       <v-card-text>
-        <v-textarea v-model="vueTranslationColumnText"></v-textarea>
+        <v-textarea rows="30" v-model="vueTranslationColumnText"></v-textarea>
       </v-card-text>
     </v-card>
 
     <v-card class="column">
       <v-card-title class="ma-2">i18n translation</v-card-title>
       <v-card-text>
-        <v-textarea v-model="i18nTranslationColumnText"></v-textarea>
+        <v-textarea rows="30" v-model="i18nTranslationColumnText"></v-textarea>
       </v-card-text>
     </v-card>
 
@@ -47,9 +47,14 @@ import {computed, ref} from 'vue'
 
   function toI18n(originalText) {
     if(!originalText) return
-    let i18nTranslation = `
-    ${componentNameInput.value}: {
-      ${toCamelCase(originalText)}: "${originalText}"
+    const lines = originalText.split("\n").map((line, i) => {
+      const camelCaseKey = toCamelCase(line);
+      if(i === 0) return `  ${camelCaseKey}: "${line}" `;
+      return `
+        ${camelCaseKey}: "${line}"`;
+    });
+    let i18nTranslation = `${componentNameInput.value}: {
+      ${lines}"
     }`
     return i18nTranslation
   }
